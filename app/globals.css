@@ -22,15 +22,8 @@
   --color-blue-deep: #005a82;
   --color-defeat: #e84057;
 
-  --animate-float: float 7s ease-in-out infinite;
   --animate-hex-spin: hex-spin 2.4s linear infinite;
   --animate-ember: ember 1.8s ease-in-out infinite;
-  --animate-sheen: sheen 3.5s ease-in-out infinite;
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.35; }
-    50% { transform: translateY(-16px) rotate(8deg); opacity: 0.6; }
-  }
 
   @keyframes hex-spin {
     to { transform: rotate(360deg); }
@@ -39,11 +32,6 @@
   @keyframes ember {
     0%, 100% { opacity: 0.35; transform: scale(0.92); }
     50% { opacity: 1; transform: scale(1.08); }
-  }
-
-  @keyframes sheen {
-    0%, 60%, 100% { background-position: 0% 50%; }
-    30% { background-position: 100% 50%; }
   }
 }
 
@@ -63,6 +51,45 @@ body {
 /* Clipped-corner hextech shapes. Tailwind v4 has no clip-path utility. */
 .clip-angled {
   clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+}
+
+/* Client-style gold corner brackets on panels. */
+.hex-frame {
+  position: relative;
+}
+
+.hex-frame::before,
+.hex-frame::after {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.hex-frame::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--color-gold);
+  border-left: 2px solid var(--color-gold);
+}
+
+.hex-frame::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 2px solid var(--color-gold);
+  border-bottom: 2px solid var(--color-gold);
+}
+
+:where(button, a, summary, input):focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+/* clip-path also clips outlines, so angled buttons show focus inside their shape. */
+.clip-angled:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-teal), 0 0 18px rgb(10 200 185 / 0.5);
 }
 
 .clip-hex {
