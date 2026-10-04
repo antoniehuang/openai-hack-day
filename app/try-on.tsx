@@ -176,6 +176,12 @@ export function TryOn() {
     setSession({ kind: "idle" });
   }
 
+  function stopCamera() {
+    stopLive();
+    if (camera.kind === "on") for (const track of camera.stream.getTracks()) track.stop();
+    setCamera({ kind: "off" });
+  }
+
   function sendPrompt() {
     if (garment.kind !== "ready") return;
     lucy.current?.setState({ prompt, reference_image_url: garment.url });
@@ -270,6 +276,15 @@ export function TryOn() {
               />
             )}
             {session.kind === "connecting" && <Overlay text={`Channeling… (${session.status})`} />}
+            {cameraStream && (
+              <button
+                type="button"
+                onClick={stopCamera}
+                className="absolute right-3 top-3 z-10 border border-gold-dark bg-abyss/85 px-3 py-1 font-display text-xs font-bold uppercase tracking-[0.2em] text-gold transition hover:border-gold hover:text-cream"
+              >
+                Camera off
+              </button>
+            )}
             {session.kind === "live" && (
               <span className="absolute left-3 top-3 flex items-center gap-2 border border-gold bg-abyss/85 px-3 py-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-cream">
                 <span className="h-2 w-2 animate-pulse bg-teal shadow-[0_0_8px_var(--color-teal)]" /> Live
