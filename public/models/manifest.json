@@ -1,0 +1,352 @@
+[
+  {
+    "champion": "Ahri",
+    "alias": "ahri",
+    "skinId": 103000,
+    "model": "/models/ahri.glb",
+    "portrait": "/skins/ahri/original-ahri.jpg"
+  },
+  {
+    "champion": "Akali",
+    "alias": "akali",
+    "skinId": 84000,
+    "model": "/models/akali.glb",
+    "portrait": "/skins/akali/original-akali.jpg"
+  },
+  {
+    "champion": "Annie",
+    "alias": "annie",
+    "skinId": 1000,
+    "model": "/models/annie.glb",
+    "portrait": "/skins/annie/original-annie.jpg"
+  },
+  {
+    "champion": "Ashe",
+    "alias": "ashe",
+    "skinId": 22000,
+    "model": "/models/ashe.glb",
+    "portrait": "/skins/ashe/original-ashe.jpg"
+  },
+  {
+    "champion": "Aurora",
+    "alias": "aurora",
+    "skinId": 893000,
+    "model": "/models/aurora.glb",
+    "portrait": "/skins/aurora/original-aurora.jpg"
+  },
+  {
+    "champion": "Caitlyn",
+    "alias": "caitlyn",
+    "skinId": 51000,
+    "model": "/models/caitlyn.glb",
+    "portrait": "/skins/caitlyn/original-caitlyn.jpg"
+  },
+  {
+    "champion": "Darius",
+    "alias": "darius",
+    "skinId": 122000,
+    "model": "/models/darius.glb",
+    "portrait": "/skins/darius/original-darius.jpg"
+  },
+  {
+    "champion": "Diana",
+    "alias": "diana",
+    "skinId": 131000,
+    "model": "/models/diana.glb",
+    "portrait": "/skins/diana/original-diana.jpg"
+  },
+  {
+    "champion": "Draven",
+    "alias": "draven",
+    "skinId": 119000,
+    "model": "/models/draven.glb",
+    "portrait": "/skins/draven/original-draven.jpg"
+  },
+  {
+    "champion": "Ekko",
+    "alias": "ekko",
+    "skinId": 245000,
+    "model": "/models/ekko.glb",
+    "portrait": "/skins/ekko/original-ekko.jpg"
+  },
+  {
+    "champion": "Evelynn",
+    "alias": "evelynn",
+    "skinId": 28000,
+    "model": "/models/evelynn.glb",
+    "portrait": "/skins/evelynn/original-evelynn.jpg"
+  },
+  {
+    "champion": "Ezreal",
+    "alias": "ezreal",
+    "skinId": 81000,
+    "model": "/models/ezreal.glb",
+    "portrait": "/skins/ezreal/original-ezreal.jpg"
+  },
+  {
+    "champion": "Fiora",
+    "alias": "fiora",
+    "skinId": 114000,
+    "model": "/models/fiora.glb",
+    "portrait": "/skins/fiora/original-fiora.jpg"
+  },
+  {
+    "champion": "Garen",
+    "alias": "garen",
+    "skinId": 86000,
+    "model": "/models/garen.glb",
+    "portrait": "/skins/garen/original-garen.jpg"
+  },
+  {
+    "champion": "Gwen",
+    "alias": "gwen",
+    "skinId": 887000,
+    "model": "/models/gwen.glb",
+    "portrait": "/skins/gwen/original-gwen.jpg"
+  },
+  {
+    "champion": "Irelia",
+    "alias": "irelia",
+    "skinId": 39000,
+    "model": "/models/irelia.glb",
+    "portrait": "/skins/irelia/original-irelia.jpg"
+  },
+  {
+    "champion": "Janna",
+    "alias": "janna",
+    "skinId": 40000,
+    "model": "/models/janna.glb",
+    "portrait": "/skins/janna/original-janna.jpg"
+  },
+  {
+    "champion": "Jhin",
+    "alias": "jhin",
+    "skinId": 202000,
+    "model": "/models/jhin.glb",
+    "portrait": "/skins/jhin/original-jhin.jpg"
+  },
+  {
+    "champion": "Jinx",
+    "alias": "jinx",
+    "skinId": 222000,
+    "model": "/models/jinx.glb",
+    "portrait": "/skins/jinx/original-jinx.jpg"
+  },
+  {
+    "champion": "Kai'Sa",
+    "alias": "kaisa",
+    "skinId": 145000,
+    "model": "/models/kaisa.glb",
+    "portrait": "/skins/kaisa/original-kaisa.jpg"
+  },
+  {
+    "champion": "Katarina",
+    "alias": "katarina",
+    "skinId": 55000,
+    "model": "/models/katarina.glb",
+    "portrait": "/skins/katarina/original-katarina.jpg"
+  },
+  {
+    "champion": "Kayle",
+    "alias": "kayle",
+    "skinId": 10000,
+    "model": "/models/kayle.glb",
+    "portrait": "/skins/kayle/original-kayle.jpg"
+  },
+  {
+    "champion": "Kayn",
+    "alias": "kayn",
+    "skinId": 141000,
+    "model": "/models/kayn.glb",
+    "portrait": "/skins/kayn/original-kayn.jpg"
+  },
+  {
+    "champion": "Leona",
+    "alias": "leona",
+    "skinId": 89000,
+    "model": "/models/leona.glb",
+    "portrait": "/skins/leona/original-leona.jpg"
+  },
+  {
+    "champion": "Lee Sin",
+    "alias": "leesin",
+    "skinId": 64000,
+    "model": "/models/leesin.glb",
+    "portrait": "/skins/lee-sin/original-lee-sin.jpg"
+  },
+  {
+    "champion": "LeBlanc",
+    "alias": "leblanc",
+    "skinId": 7000,
+    "model": "/models/leblanc.glb",
+    "portrait": "/skins/leblanc/original-leblanc.jpg"
+  },
+  {
+    "champion": "Lillia",
+    "alias": "lillia",
+    "skinId": 876000,
+    "model": "/models/lillia.glb",
+    "portrait": "/skins/lillia/original-lillia.jpg"
+  },
+  {
+    "champion": "Lux",
+    "alias": "lux",
+    "skinId": 99000,
+    "model": "/models/lux.glb",
+    "portrait": "/skins/lux/original-lux.jpg"
+  },
+  {
+    "champion": "Master Yi",
+    "alias": "masteryi",
+    "skinId": 11000,
+    "model": "/models/masteryi.glb",
+    "portrait": "/skins/master-yi/original-master-yi.jpg"
+  },
+  {
+    "champion": "Miss Fortune",
+    "alias": "missfortune",
+    "skinId": 21000,
+    "model": "/models/missfortune.glb",
+    "portrait": "/skins/miss-fortune/original-miss-fortune.jpg"
+  },
+  {
+    "champion": "Morgana",
+    "alias": "morgana",
+    "skinId": 25000,
+    "model": "/models/morgana.glb",
+    "portrait": "/skins/morgana/original-morgana.jpg"
+  },
+  {
+    "champion": "Nami",
+    "alias": "nami",
+    "skinId": 267000,
+    "model": "/models/nami.glb",
+    "portrait": "/skins/nami/original-nami.jpg"
+  },
+  {
+    "champion": "Neeko",
+    "alias": "neeko",
+    "skinId": 518000,
+    "model": "/models/neeko.glb",
+    "portrait": "/skins/neeko/original-neeko.jpg"
+  },
+  {
+    "champion": "Nidalee",
+    "alias": "nidalee",
+    "skinId": 76000,
+    "model": "/models/nidalee.glb",
+    "portrait": "/skins/nidalee/original-nidalee.jpg"
+  },
+  {
+    "champion": "Qiyana",
+    "alias": "qiyana",
+    "skinId": 246000,
+    "model": "/models/qiyana.glb",
+    "portrait": "/skins/qiyana/original-qiyana.jpg"
+  },
+  {
+    "champion": "Riven",
+    "alias": "riven",
+    "skinId": 92000,
+    "model": "/models/riven.glb",
+    "portrait": "/skins/riven/original-riven.jpg"
+  },
+  {
+    "champion": "Samira",
+    "alias": "samira",
+    "skinId": 360000,
+    "model": "/models/samira.glb",
+    "portrait": "/skins/samira/original-samira.jpg"
+  },
+  {
+    "champion": "Senna",
+    "alias": "senna",
+    "skinId": 235000,
+    "model": "/models/senna.glb",
+    "portrait": "/skins/senna/original-senna.jpg"
+  },
+  {
+    "champion": "Seraphine",
+    "alias": "seraphine",
+    "skinId": 147000,
+    "model": "/models/seraphine.glb",
+    "portrait": "/skins/seraphine/original-seraphine.jpg"
+  },
+  {
+    "champion": "Sett",
+    "alias": "sett",
+    "skinId": 875000,
+    "model": "/models/sett.glb",
+    "portrait": "/skins/sett/original-sett.jpg"
+  },
+  {
+    "champion": "Sona",
+    "alias": "sona",
+    "skinId": 37000,
+    "model": "/models/sona.glb",
+    "portrait": "/skins/sona/original-sona.jpg"
+  },
+  {
+    "champion": "Soraka",
+    "alias": "soraka",
+    "skinId": 16000,
+    "model": "/models/soraka.glb",
+    "portrait": "/skins/soraka/original-soraka.jpg"
+  },
+  {
+    "champion": "Syndra",
+    "alias": "syndra",
+    "skinId": 134000,
+    "model": "/models/syndra.glb",
+    "portrait": "/skins/syndra/original-syndra.jpg"
+  },
+  {
+    "champion": "Teemo",
+    "alias": "teemo",
+    "skinId": 17000,
+    "model": "/models/teemo.glb",
+    "portrait": "/skins/teemo/original-teemo.jpg"
+  },
+  {
+    "champion": "Thresh",
+    "alias": "thresh",
+    "skinId": 412000,
+    "model": "/models/thresh.glb",
+    "portrait": "/skins/thresh/original-thresh.jpg"
+  },
+  {
+    "champion": "Vayne",
+    "alias": "vayne",
+    "skinId": 67000,
+    "model": "/models/vayne.glb",
+    "portrait": "/skins/vayne/original-vayne.jpg"
+  },
+  {
+    "champion": "Vi",
+    "alias": "vi",
+    "skinId": 254000,
+    "model": "/models/vi.glb",
+    "portrait": "/skins/vi/original-vi.jpg"
+  },
+  {
+    "champion": "Viego",
+    "alias": "viego",
+    "skinId": 234000,
+    "model": "/models/viego.glb",
+    "portrait": "/skins/viego/original-viego.jpg"
+  },
+  {
+    "champion": "Yasuo",
+    "alias": "yasuo",
+    "skinId": 157000,
+    "model": "/models/yasuo.glb",
+    "portrait": "/skins/yasuo/original-yasuo.jpg"
+  },
+  {
+    "champion": "Zoe",
+    "alias": "zoe",
+    "skinId": 142000,
+    "model": "/models/zoe.glb",
+    "portrait": "/skins/zoe/original-zoe.jpg"
+  }
+]

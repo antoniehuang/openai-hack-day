@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-cinzel);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* Palette read from leagueoflegends.com: #0A1428 navy, #C8AA6E gold, #F0E6D2 cream, #59C1DE teal. */
+  --color-abyss: #010a13;
+  --color-navy: #0a1428;
+  --color-navy-deep: #091428;
+  --color-steel: #1e2328;
+  --color-gold: #c8aa6e;
+  --color-gold-deep: #c89b3c;
+  --color-gold-dark: #785a28;
+  --color-gold-shadow: #463714;
+  --color-cream: #f0e6d2;
+  --color-parchment: #a09b8c;
+  --color-teal: #0ac8b9;
+  --color-teal-deep: #0397ab;
+  --color-blue-deep: #005a82;
+  --color-defeat: #e84057;
+
+  --animate-hex-spin: hex-spin 2.4s linear infinite;
+  --animate-ember: ember 1.8s ease-in-out infinite;
+
+  @keyframes hex-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes ember {
+    0%, 100% { opacity: 0.35; transform: scale(0.92); }
+    50% { opacity: 1; transform: scale(1.08); }
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-cream);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  background-color: var(--color-abyss);
+  background-image:
+    radial-gradient(ellipse 80% 45% at 50% -5%, rgb(3 151 171 / 0.32), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 110%, rgb(120 90 40 / 0.25), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 1 55 16.5v32L28 64 1 48.5v-32zM28 65 55 80.5V97M28 65 1 80.5V97' fill='none' stroke='%23c8aa6e' stroke-opacity='0.08' stroke-width='1'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, var(--color-navy-deep) 0%, var(--color-abyss) 55%, #000 100%);
+  background-size: 100% 100%, 100% 100%, 56px 97px, 100% 100%;
+  background-attachment: fixed;
+}
+
+/* Clipped-corner hextech shapes. Tailwind v4 has no clip-path utility. */
+.clip-angled {
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+}
+
+/* Client-style gold corner brackets on panels. */
+.hex-frame {
+  position: relative;
+}
+
+.hex-frame::before,
+.hex-frame::after {
+  content: "";
+  position: absolute;
+  z-index: 5;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+.hex-frame::before {
+  top: -1px;
+  left: -1px;
+  border-top: 2px solid var(--color-gold);
+  border-left: 2px solid var(--color-gold);
+}
+
+.hex-frame::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 2px solid var(--color-gold);
+  border-bottom: 2px solid var(--color-gold);
+}
+
+:where(button, a, summary, input):focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+/* clip-path also clips outlines, so angled buttons show focus inside their shape. */
+.clip-angled:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-teal), 0 0 18px rgb(10 200 185 / 0.5);
+}
+
+.clip-hex {
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+  }
 }
