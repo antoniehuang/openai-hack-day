@@ -194,7 +194,11 @@ export function TryOn() {
     const canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    canvas.getContext("2d")?.drawImage(video, 0, 0);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
     setSnap(canvas.toDataURL("image/jpeg", 0.92));
   }
 
@@ -246,9 +250,9 @@ export function TryOn() {
         <Step n={3} title="The Mirror">
           <div className={`${panel} relative aspect-[4/3] overflow-hidden bg-abyss`}>
             {session.kind === "live" && outputStream ? (
-              <video ref={outputVideo} autoPlay playsInline muted className="h-full w-full object-cover" />
+              <video ref={outputVideo} autoPlay playsInline muted className="h-full w-full -scale-x-100 object-cover" />
             ) : cameraStream ? (
-              <video ref={localVideo} autoPlay playsInline muted className="h-full w-full object-cover" />
+              <video ref={localVideo} autoPlay playsInline muted className="h-full w-full -scale-x-100 object-cover" />
             ) : (
               <div className="flex h-full flex-col items-center justify-center gap-4 bg-[radial-gradient(ellipse_at_center,rgb(0_90_130/0.35),transparent_70%)] p-6 text-center">
                 <HexGlyph className="h-16 w-16 animate-ember text-teal" />
@@ -272,7 +276,7 @@ export function TryOn() {
                 autoPlay
                 playsInline
                 muted
-                className="absolute bottom-3 right-3 w-1/4 border border-gold shadow-[0_0_16px_rgb(0_0_0/0.8)]"
+                className="absolute bottom-3 right-3 w-1/4 -scale-x-100 border border-gold shadow-[0_0_16px_rgb(0_0_0/0.8)]"
               />
             )}
             {session.kind === "connecting" && <Overlay text={`Channeling… (${session.status})`} />}
