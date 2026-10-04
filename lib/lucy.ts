@@ -2,7 +2,7 @@ import { decode, encode } from "@msgpack/msgpack";
 
 const LUCY_WS = "wss://fal.run/decart/lucy2-vton/realtime";
 const FALLBACK_ICE: RTCIceServer[] = [{ urls: "stun:stun.l.google.com:19302" }];
-const ICE_WAIT_MS = 1500;
+const READY_TIMEOUT_MS = 45000;
 
 export const DEFAULT_PROMPT =
   "Substitute the person's current outfit with the cosplay costume from the reference image, matching its colours, materials, accessories and fit.";
@@ -66,7 +66,7 @@ export function connectLucy(opts: {
     for (const track of opts.stream.getVideoTracks()) pc.addTrack(track, opts.stream);
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
-    send({ type: "offer", sdp: offer.sdp, ...state });
+    send({ type: "offer", sdp: offer.sdp });
   }
 
   const handlers: Record<string, (msg: Inbound) => Promise<void> | void> = {
@@ -101,9 +101,10 @@ export function connectLucy(opts: {
   opts.onStatus("connecting");
   ws.onopen = () => {
     opts.onStatus("signalling");
+    send(state);
     setTimeout(() => {
-      if (!pc && !closed) startPeer(FALLBACK_ICE).catch((e: unknown) => fail(String(e)));
-    }, ICE_WAIT_MS);
+      if (!pc) fail("The try-on server took too long to warm up. Try again.");
+    }, READY_TIMEOUT_MS);
   };
   ws.onmessage = async (event) => {
     const msg = await readMessage(event.data);

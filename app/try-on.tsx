@@ -153,7 +153,10 @@ export function TryOn() {
           else if (status === "closed") setSession({ kind: "idle" });
           else if (status !== "live") setSession((s) => (s.kind === "live" ? s : { kind: "connecting", status }));
         },
-        onMessage: (msg) => addLog(`← ${JSON.stringify(msg).slice(0, 300)}`),
+        onMessage: (msg) => {
+          const text = JSON.stringify(msg);
+          if (!text.includes('"action":"timings"')) addLog(`← ${text.slice(0, 300)}`);
+        },
       });
     } catch {
       setSession({ kind: "error", message: "Couldn't reach the server." });
