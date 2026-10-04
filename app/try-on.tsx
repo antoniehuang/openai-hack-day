@@ -226,7 +226,7 @@ export function TryOn() {
             {session.kind === "live" && outputStream ? (
               <video ref={outputVideo} autoPlay playsInline muted className="h-full w-full object-cover" />
             ) : cameraStream ? (
-              <video ref={localVideo} autoPlay playsInline muted className="h-full w-full scale-x-[-1] object-cover" />
+              <video ref={localVideo} autoPlay playsInline muted className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full flex-col items-center justify-center gap-3 bg-blush p-6 text-center">
                 <span className="animate-bob text-6xl">🪞</span>
@@ -250,7 +250,7 @@ export function TryOn() {
                 autoPlay
                 playsInline
                 muted
-                className="absolute bottom-3 right-3 w-1/4 scale-x-[-1] rounded-xl border-[3px] border-white shadow-lg"
+                className="absolute bottom-3 right-3 w-1/4 rounded-xl border-[3px] border-white shadow-lg"
               />
             )}
             {session.kind === "connecting" && <Overlay text={`Opening the portal… (${session.status})`} />}
