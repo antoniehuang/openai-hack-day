@@ -3,7 +3,9 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type DragEvent } from "react";
 import { connectLucy, DEFAULT_PROMPT, type LucyHandle, type LucyStatus } from "@/lib/lucy";
+import { ChampionPicker } from "./champion-picker";
 import { SkinLibrary } from "./skin-library";
+import { hexButton, HexGlyph } from "./ui";
 
 type Upload = { file: File; previewUrl: string };
 
@@ -25,6 +27,13 @@ type Session =
   | { kind: "live"; output: MediaStream | null }
   | { kind: "error"; message: string };
 
+type Picker = "3d" | "2d";
+
+const PICKERS: { id: Picker; label: string }[] = [
+  { id: "3d", label: "3D Champions" },
+  { id: "2d", label: "All skins" },
+];
+
 const EXTRACT_MESSAGES = [
   "Forging your skin…",
   "Channeling…",
@@ -34,9 +43,6 @@ const EXTRACT_MESSAGES = [
 
 const panel =
   "hex-frame border border-gold-shadow bg-navy/90 shadow-[inset_0_0_0_1px_rgb(200_170_110/0.08),inset_0_0_40px_rgb(1_10_19/0.85),0_8px_30px_rgb(0_0_0/0.5)]";
-
-const hexButton =
-  "clip-angled font-display font-bold uppercase tracking-[0.2em] text-abyss bg-[linear-gradient(180deg,#f0e6d2_0%,#c8aa6e_30%,#c89b3c_60%,#785a28_100%)] bg-[length:100%_200%] bg-top shadow-[0_0_18px_rgb(200_155_60/0.35)] transition hover:bg-bottom hover:shadow-[0_0_28px_rgb(200_155_60/0.6)] active:translate-y-px disabled:cursor-not-allowed disabled:bg-[linear-gradient(180deg,#2a3140_0%,#1e2328_100%)] disabled:text-parchment disabled:shadow-none";
 
 const ghostButton =
   "border border-gold-dark bg-abyss/70 font-display font-bold uppercase tracking-[0.2em] text-gold transition hover:border-gold hover:text-cream hover:shadow-[0_0_18px_rgb(200_170_110/0.25)] active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40";
@@ -75,6 +81,7 @@ export function TryOn() {
   const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
   const [snap, setSnap] = useState<string | null>(null);
   const [log, setLog] = useState<string[]>([]);
+  const [picker, setPicker] = useState<Picker>("3d");
   const [library, setLibrary] = useState<{ open: boolean; champion: string | null }>({ open: false, champion: null });
   const closeLibrary = useCallback(() => setLibrary((l) => ({ ...l, open: false })), []);
   const lucy = useRef<LucyHandle | null>(null);
@@ -246,16 +253,46 @@ export function TryOn() {
       </header>
 
       <main className="grid flex-1 grid-cols-1 gap-3 p-3 lg:min-h-0 lg:grid-cols-[minmax(19rem,23rem)_minmax(0,1fr)_minmax(16rem,19rem)] lg:p-4">
-        <aside aria-label="Champion select" className={`${panel} flex h-[62svh] min-h-0 flex-col lg:col-start-1 lg:row-start-1 lg:h-auto`}>
-          <SkinLibrary
-            open
-            initialChampion={library.champion}
-            onClose={closeLibrary}
-            onPick={(file, skinName) => {
-              chooseCharacter(file);
-              addLog(`library pick ${skinName}`);
-            }}
-          />
+        <aside aria-label="Champion select" className={`${panel} flex h-[70svh] min-h-0 flex-col lg:col-start-1 lg:row-start-1 lg:h-auto`}>
+          <div role="tablist" aria-label="Pick by" className="grid shrink-0 grid-cols-2 border-b border-gold-shadow">
+            {PICKERS.map((p) => {
+              const active = p.id === picker;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setPicker(p.id)}
+                  className={`relative px-3 py-2.5 font-display text-xs font-bold uppercase tracking-[0.2em] transition after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 ${
+                    active
+                      ? "bg-abyss/60 text-cream after:bg-gold after:shadow-[0_0_10px_var(--color-gold)]"
+                      : "text-parchment hover:text-gold"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+          {picker === "3d" ? (
+            <ChampionPicker
+              onPick={(file, champion) => {
+                chooseCharacter(file);
+                addLog(`champion pick ${champion}`);
+              }}
+            />
+          ) : (
+            <SkinLibrary
+              open
+              initialChampion={library.champion}
+              onClose={closeLibrary}
+              onPick={(file, skinName) => {
+                chooseCharacter(file);
+                addLog(`library pick ${skinName}`);
+              }}
+            />
+          )}
         </aside>
 
         <aside aria-label="Loadout" className="flex min-h-0 flex-col gap-3 lg:col-start-3 lg:row-start-1 lg:overflow-y-auto">
@@ -623,15 +660,5 @@ function DropZone({
         </span>
       </span>
     </label>
-  );
-}
-
-function HexGlyph({ className }: { className?: string }) {
-  return (
-    <svg aria-hidden viewBox="0 0 100 100" fill="none" stroke="currentColor" className={className}>
-      <path d="M50 4 90 27v46L50 96 10 73V27z" strokeWidth="3" />
-      <path d="M50 22 74 36v28L50 78 26 64V36z" strokeWidth="2" opacity="0.6" />
-      <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.8" />
-    </svg>
   );
 }
