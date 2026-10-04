@@ -5,7 +5,7 @@ const FALLBACK_ICE: RTCIceServer[] = [{ urls: "stun:stun.l.google.com:19302" }];
 const READY_TIMEOUT_MS = 45000;
 
 export const DEFAULT_PROMPT =
-  "Substitute the person's current outfit with the cosplay costume from the reference image, matching its colours, materials, accessories and fit.";
+  "Change the person's hair into the wig from the reference image: the same hair colour, length and style, including bangs, braids and any ears or headpieces, worn on their head. Then substitute their outfit with the cosplay costume from the reference image, matching its colours, materials, accessories and fit. Keep their face and identity.";
 
 export type LucyStatus = "connecting" | "signalling" | "live" | "closed" | "error";
 
