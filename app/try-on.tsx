@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { connectLucy, DEFAULT_PROMPT, type LucyHandle, type LucyStatus } from "@/lib/lucy";
+import { SkinLibrary } from "./skin-library";
 
 type Upload = { file: File; previewUrl: string };
 
@@ -74,6 +75,8 @@ export function TryOn() {
   const [prompt, setPrompt] = useState(DEFAULT_PROMPT);
   const [snap, setSnap] = useState<string | null>(null);
   const [log, setLog] = useState<string[]>([]);
+  const [library, setLibrary] = useState<{ open: boolean; champion: string | null }>({ open: false, champion: null });
+  const closeLibrary = useCallback(() => setLibrary((l) => ({ ...l, open: false })), []);
   const lucy = useRef<LucyHandle | null>(null);
   const extraction = useRef(0);
 
@@ -213,6 +216,13 @@ export function TryOn() {
 
       <section className="relative grid gap-6 md:grid-cols-[1fr_1fr_1.6fr]">
         <Step n={1} title="Choose your champion">
+          <button
+            type="button"
+            onClick={() => setLibrary({ open: true, champion: null })}
+            className={`${hexButton} px-4 py-2.5 text-xs`}
+          >
+            Browse 2,000+ skins
+          </button>
           <DropZone
             label="Champion"
             hint="Full-body, front-facing splash art works best"
@@ -342,17 +352,30 @@ export function TryOn() {
         <p className="font-display text-xs font-bold uppercase tracking-[0.3em] text-gold">Champion ideas</p>
         <ul className="flex flex-wrap justify-center gap-2">
           {CHARACTER_IDEAS.map((name, i) => (
-            <li
-              key={name}
-              className={`clip-angled border px-4 py-1.5 text-xs uppercase tracking-[0.15em] ${
-                i % 2 === 0 ? "border-gold-dark bg-navy text-cream" : "border-blue-deep bg-navy-deep text-teal"
-              }`}
-            >
-              {name}
+            <li key={name}>
+              <button
+                type="button"
+                onClick={() => setLibrary({ open: true, champion: name })}
+                className={`clip-angled border px-4 py-1.5 text-xs uppercase tracking-[0.15em] transition hover:border-gold hover:text-cream ${
+                  i % 2 === 0 ? "border-gold-dark bg-navy text-cream" : "border-blue-deep bg-navy-deep text-teal"
+                }`}
+              >
+                {name}
+              </button>
             </li>
           ))}
         </ul>
       </section>
+
+      <SkinLibrary
+        open={library.open}
+        initialChampion={library.champion}
+        onClose={closeLibrary}
+        onPick={(file, skinName) => {
+          chooseCharacter(file);
+          addLog(`library pick ${skinName}`);
+        }}
+      />
 
       <details className="relative mx-auto w-full max-w-3xl text-xs">
         <summary className="cursor-pointer text-center uppercase tracking-[0.2em] text-parchment/60">Debug log</summary>
@@ -418,7 +441,7 @@ function GarmentBody({ garment, onRetry }: { garment: Garment; onRetry?: () => v
     case "ready":
       return (
         <>
-          <Image src={garment.url} alt="Extracted costume" fill unoptimized className="object-contain p-2" />
+          <Image src={garment.url} alt="Extracted costume" fill unoptimized className="object-contain px-3 pb-3 pt-14" />
           <span className="absolute left-4 top-4 border border-gold bg-abyss/85 px-3 py-1 font-display text-xs font-bold uppercase tracking-[0.25em] text-gold">
             Skin forged
           </span>
@@ -515,10 +538,18 @@ function DropZone({
         <>
           <Image
             src={upload.previewUrl}
+            alt=""
+            aria-hidden
+            fill
+            unoptimized
+            className="scale-110 object-cover opacity-40 blur-xl"
+          />
+          <Image
+            src={upload.previewUrl}
             alt={`${label} preview`}
             fill
             unoptimized
-            className="object-cover"
+            className="object-contain px-3 pb-3 pt-14"
           />
           <span className="absolute bottom-4 right-4 z-10 border border-gold bg-abyss/85 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cream opacity-0 transition group-hover:opacity-100">
             Change art
