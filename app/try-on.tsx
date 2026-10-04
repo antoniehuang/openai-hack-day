@@ -25,18 +25,22 @@ type Session =
   | { kind: "error"; message: string };
 
 const EXTRACT_MESSAGES = [
-  "Sewing the costume…",
-  "Ironing the pleats…",
-  "Polishing the props…",
-  "Summoning the sparkles…",
+  "Forging your skin…",
+  "Channeling…",
+  "Polishing the hextech…",
+  "Enchanting the fabric…",
 ];
 
-const CHARACTER_IDEAS = ["Sailor Moon", "Naruto", "Nezuko", "Goku", "Tanjiro", "Asuka", "Kiki", "Luffy"];
+const CHARACTER_IDEAS = ["Ahri", "Jinx", "Lux", "Yasuo", "Kai'Sa", "Seraphine", "Teemo", "Akali"];
 
-const sticker = "rounded-[2rem] border-4 border-ink bg-white shadow-[6px_6px_0_0_var(--color-ink)]";
+const panel =
+  "border border-gold-dark bg-navy shadow-[inset_0_0_0_1px_rgb(200_170_110/0.12),inset_0_0_40px_rgb(1_10_19/0.9),0_0_30px_rgb(0_0_0/0.6)]";
 
-const chunkyButton =
-  "rounded-full border-4 border-ink font-display font-black shadow-[4px_4px_0_0_var(--color-ink)] transition hover:-translate-y-0.5 active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_0_var(--color-ink)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0";
+const hexButton =
+  "clip-angled font-display font-bold uppercase tracking-[0.2em] text-abyss bg-[linear-gradient(180deg,#f0e6d2_0%,#c8aa6e_30%,#c89b3c_60%,#785a28_100%)] bg-[length:100%_200%] bg-top shadow-[0_0_18px_rgb(200_155_60/0.35)] transition hover:bg-bottom hover:shadow-[0_0_28px_rgb(200_155_60/0.6)] active:translate-y-px disabled:cursor-not-allowed disabled:bg-[linear-gradient(180deg,#3b4353_0%,#1e2328_100%)] disabled:text-parchment/60 disabled:shadow-none";
+
+const ghostButton =
+  "clip-angled border border-gold-dark bg-navy font-display font-bold uppercase tracking-[0.2em] text-gold transition hover:border-gold hover:text-cream hover:shadow-[0_0_18px_rgb(200_170_110/0.25)] active:translate-y-px disabled:cursor-not-allowed disabled:opacity-40";
 
 function replaceUpload(previous: Upload | null, file: File): Upload {
   if (previous) URL.revokeObjectURL(previous.previewUrl);
@@ -189,55 +193,57 @@ export function TryOn() {
     <div className="relative mx-auto flex w-full max-w-6xl flex-1 flex-col gap-10 overflow-hidden px-5 py-10 sm:px-8 sm:py-14">
       <Decorations />
 
-      <header className="relative flex flex-col items-center gap-4 text-center">
-        <span className="rotate-[-4deg] rounded-full border-4 border-ink bg-zap px-4 py-1 font-display text-lg font-black shadow-[4px_4px_0_0_var(--color-ink)]">
-          ライブ コスプレ変身!
+      <header className="relative flex flex-col items-center gap-5 text-center">
+        <span className="flex items-center gap-3 font-display text-xs font-bold uppercase tracking-[0.35em] text-gold sm:text-sm">
+          <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold" />
+          Summoner&apos;s Fitting Room
+          <span className="h-px w-10 bg-gradient-to-l from-transparent to-gold" />
         </span>
-        <h1 className="font-display text-5xl font-black tracking-tight text-bubblegum [text-shadow:4px_4px_0_var(--color-ink)] sm:text-7xl">
-          Cosplay Mirror <span className="inline-block animate-wiggle">✨</span>
+        <h1 className="font-display text-5xl font-black uppercase tracking-[0.08em] text-cream [text-shadow:0_0_30px_rgb(200_170_110/0.45),0_2px_0_rgb(70_55_20)] sm:text-7xl">
+          Cosplay Mirror
         </h1>
-        <p className="max-w-xl text-lg font-medium text-ink/80">
-          Drop in your favourite anime character, switch on your camera, and watch yourself
-          wear their costume live. Move, spin, strike a pose!
+        <p className="max-w-xl text-base text-parchment sm:text-lg">
+          Drop in a champion&apos;s splash art, light your camera, and watch the skin wrap around you
+          live. Move, spin, strike a pose on the Rift.
         </p>
       </header>
 
       <section className="relative grid gap-6 md:grid-cols-[1fr_1fr_1.6fr]">
-        <Step n={1} title="Pick a character">
+        <Step n={1} title="Choose your champion">
           <DropZone
-            label="Character"
-            hint="Full-body, front-facing art works best"
-            emoji="🎎"
+            label="Champion"
+            hint="Full-body, front-facing splash art works best"
+            emoji="✦"
             upload={character}
             onFile={chooseCharacter}
             onReject={() => setGarment({ kind: "failed", message: "That file isn't an image. Try a JPG, PNG or WebP." })}
           />
         </Step>
 
-        <Step n={2} title="Costume workshop">
+        <Step n={2} title="The Forge">
           <CostumeCard garment={garment} onRetry={character ? () => void extract(character.file) : undefined} />
         </Step>
 
-        <Step n={3} title="Mirror mirror">
-          <div className={`${sticker} relative aspect-[4/3] overflow-hidden bg-ink`}>
+        <Step n={3} title="The Mirror">
+          <div className={`${panel} relative aspect-[4/3] overflow-hidden bg-abyss`}>
             {session.kind === "live" && outputStream ? (
               <video ref={outputVideo} autoPlay playsInline muted className="h-full w-full object-cover" />
             ) : cameraStream ? (
               <video ref={localVideo} autoPlay playsInline muted className="h-full w-full scale-x-[-1] object-cover" />
             ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-3 bg-blush p-6 text-center">
-                <span className="animate-bob text-6xl">🪞</span>
-                <p className="font-display text-xl font-black">Your magic mirror</p>
+              <div className="flex h-full flex-col items-center justify-center gap-4 bg-[radial-gradient(ellipse_at_center,rgb(0_90_130/0.35),transparent_70%)] p-6 text-center">
+                <HexGlyph className="h-16 w-16 animate-ember text-teal" />
+                <p className="font-display text-lg font-bold uppercase tracking-[0.2em] text-cream">The mirror sleeps</p>
                 {camera.kind === "denied" && (
-                  <p className="text-sm font-bold text-bubblegum">Camera blocked: {camera.message}</p>
+                  <p className="text-sm text-defeat">Camera blocked: {camera.message}</p>
                 )}
                 <button
                   type="button"
                   onClick={startCamera}
                   disabled={camera.kind === "starting"}
-                  className={`${chunkyButton} bg-sky px-6 py-2 text-lg`}
+                  className={`${hexButton} px-7 py-2.5 text-sm`}
                 >
-                  {camera.kind === "starting" ? "Waking camera…" : "Start camera 📷"}
+                  {camera.kind === "starting" ? "Summoning camera…" : "Light the camera"}
                 </button>
               </div>
             )}
@@ -247,13 +253,13 @@ export function TryOn() {
                 autoPlay
                 playsInline
                 muted
-                className="absolute bottom-3 right-3 w-1/4 scale-x-[-1] rounded-xl border-[3px] border-white shadow-lg"
+                className="absolute bottom-3 right-3 w-1/4 scale-x-[-1] border border-gold shadow-[0_0_16px_rgb(0_0_0/0.8)]"
               />
             )}
-            {session.kind === "connecting" && <Overlay text={`Opening the portal… (${session.status})`} />}
+            {session.kind === "connecting" && <Overlay text={`Channeling… (${session.status})`} />}
             {session.kind === "live" && (
-              <span className="absolute left-3 top-3 flex items-center gap-2 rounded-full border-[3px] border-ink bg-bubblegum px-3 py-0.5 font-display text-sm font-black text-white">
-                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-zap" /> LIVE
+              <span className="absolute left-3 top-3 flex items-center gap-2 border border-gold bg-abyss/85 px-3 py-1 font-display text-xs font-bold uppercase tracking-[0.3em] text-cream">
+                <span className="h-2 w-2 animate-pulse bg-teal shadow-[0_0_8px_var(--color-teal)]" /> Live
               </span>
             )}
           </div>
@@ -263,16 +269,16 @@ export function TryOn() {
       <div className="relative flex flex-wrap items-center justify-center gap-4">
         {isLive ? (
           <>
-            <button type="button" onClick={stopLive} className={`${chunkyButton} bg-white px-8 py-3 text-xl`}>
-              Stop ⏹
+            <button type="button" onClick={stopLive} className={`${ghostButton} px-8 py-3 text-base`}>
+              Recall
             </button>
             <button
               type="button"
               onClick={takeSnap}
               disabled={session.kind !== "live"}
-              className={`${chunkyButton} bg-zap px-8 py-3 text-xl`}
+              className={`${hexButton} px-8 py-3 text-base`}
             >
-              Snap! 📸
+              Capture
             </button>
           </>
         ) : (
@@ -280,16 +286,16 @@ export function TryOn() {
             type="button"
             onClick={goLive}
             disabled={!canGoLive}
-            className={`${chunkyButton} bg-bubblegum px-10 py-4 text-2xl text-white sm:text-3xl`}
+            className={`${hexButton} px-14 py-4 text-lg sm:text-xl`}
           >
-            Go live! 変身
+            Go live
           </button>
         )}
       </div>
       {!isLive && !canGoLive && (
-        <p className="relative -mt-6 text-center text-sm font-bold text-ink/70">
-          {garment.kind !== "ready" ? "Pick a character and wait for the costume to be stitched. " : ""}
-          {camera.kind !== "on" ? "Switch on your camera." : ""}
+        <p className="relative -mt-6 text-center text-xs uppercase tracking-[0.2em] text-parchment">
+          {garment.kind !== "ready" ? "Choose a champion and wait for the forge. " : ""}
+          {camera.kind !== "on" ? "Light your camera." : ""}
         </p>
       )}
 
@@ -301,42 +307,42 @@ export function TryOn() {
             e.preventDefault();
             sendPrompt();
           }}
-          className={`${sticker} relative mx-auto flex w-full max-w-3xl flex-col gap-3 p-4 sm:flex-row`}
+          className={`${panel} relative mx-auto flex w-full max-w-3xl flex-col gap-3 p-4 sm:flex-row`}
         >
           <input
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="flex-1 rounded-full border-[3px] border-ink px-4 py-2 font-medium outline-none focus:bg-blush/40"
+            className="flex-1 border border-gold-dark bg-abyss px-4 py-2 text-cream outline-none placeholder:text-parchment/50 focus:border-teal focus:shadow-[0_0_12px_rgb(10_200_185/0.3)]"
             aria-label="Costume prompt"
           />
-          <button type="submit" className={`${chunkyButton} bg-sky px-6 py-2`}>
-            Re-style 🎨
+          <button type="submit" className={`${ghostButton} px-6 py-2 text-sm`}>
+            Recast
           </button>
         </form>
       )}
 
       {snap && (
-        <section className={`${sticker} relative mx-auto flex w-full max-w-md rotate-[-2deg] flex-col gap-4 p-4 pb-6`}>
-          <Image src={snap} alt="Your cosplay snapshot" width={640} height={480} unoptimized className="w-full rounded-xl border-4 border-ink" />
+        <section className={`${panel} relative mx-auto flex w-full max-w-md flex-col gap-4 p-4 pb-6`}>
+          <Image src={snap} alt="Your cosplay snapshot" width={640} height={480} unoptimized className="w-full border border-gold" />
           <div className="flex justify-center gap-3">
-            <a href={snap} download="cosplay-mirror.jpg" className={`${chunkyButton} bg-zap px-6 py-2 text-lg`}>
-              Download ⬇
+            <a href={snap} download="cosplay-mirror.jpg" className={`${hexButton} px-6 py-2 text-sm`}>
+              Download
             </a>
-            <button type="button" onClick={() => setSnap(null)} className={`${chunkyButton} bg-white px-6 py-2 text-lg`}>
+            <button type="button" onClick={() => setSnap(null)} className={`${ghostButton} px-6 py-2 text-sm`}>
               Close
             </button>
           </div>
         </section>
       )}
 
-      <section className="relative flex flex-col items-center gap-3">
-        <p className="font-display text-base font-bold">Need ideas? Try…</p>
+      <section className="relative flex flex-col items-center gap-4">
+        <p className="font-display text-xs font-bold uppercase tracking-[0.3em] text-gold">Champion ideas</p>
         <ul className="flex flex-wrap justify-center gap-2">
           {CHARACTER_IDEAS.map((name, i) => (
             <li
               key={name}
-              className={`rounded-full border-[3px] border-ink px-4 py-1 text-sm font-bold shadow-[3px_3px_0_0_var(--color-ink)] ${
-                i % 2 === 0 ? "bg-sky" : "bg-zap"
+              className={`clip-angled border px-4 py-1.5 text-xs uppercase tracking-[0.15em] ${
+                i % 2 === 0 ? "border-gold-dark bg-navy text-cream" : "border-blue-deep bg-navy-deep text-teal"
               }`}
             >
               {name}
@@ -346,8 +352,8 @@ export function TryOn() {
       </section>
 
       <details className="relative mx-auto w-full max-w-3xl text-xs">
-        <summary className="cursor-pointer text-center font-bold text-ink/60">🐛 debug</summary>
-        <pre className="mt-2 max-h-64 overflow-auto rounded-xl border-2 border-ink bg-white/80 p-3 whitespace-pre-wrap">
+        <summary className="cursor-pointer text-center uppercase tracking-[0.2em] text-parchment/60">Debug log</summary>
+        <pre className="mt-2 max-h-64 overflow-auto border border-gold-shadow bg-abyss/80 p-3 whitespace-pre-wrap text-parchment">
           {log.join("\n") || "No messages yet."}
         </pre>
       </details>
@@ -358,9 +364,10 @@ export function TryOn() {
 function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-3">
-      <h2 className="flex items-center gap-2 font-display text-xl font-black">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-ink bg-zap">{n}</span>
+      <h2 className="flex items-center gap-3 whitespace-nowrap font-display text-sm font-bold uppercase tracking-[0.25em] text-cream">
+        <span className="clip-hex flex h-8 w-8 items-center justify-center bg-gold text-xs text-abyss">{n}</span>
         {title}
+        <span className="h-px flex-1 bg-gradient-to-r from-gold-dark to-transparent" />
       </h2>
       {children}
     </div>
@@ -369,31 +376,25 @@ function Step({ n, title, children }: { n: number; title: string; children: Reac
 
 function Overlay({ text }: { text: string }) {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-ink/60 text-center text-white">
-      <span className="animate-spin text-5xl [animation-duration:2s]">🌸</span>
-      <p className="font-display text-xl font-black">{text}</p>
+    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-abyss/75 text-center backdrop-blur-[2px]">
+      <HexGlyph className="h-14 w-14 animate-hex-spin text-teal" />
+      <p className="font-display text-base font-bold uppercase tracking-[0.25em] text-cream">{text}</p>
     </div>
   );
 }
 
 function Bubble({ message }: { message: string }) {
   return (
-    <section className="relative mx-auto flex w-full max-w-xl items-end gap-3">
-      <span className="animate-bob text-5xl">🥺</span>
-      <div
-        role="alert"
-        className="relative flex-1 rounded-[1.5rem] border-4 border-ink bg-white px-5 py-4 font-medium shadow-[5px_5px_0_0_var(--color-ink)] before:absolute before:-left-[14px] before:bottom-4 before:h-5 before:w-5 before:rotate-45 before:border-b-4 before:border-l-4 before:border-ink before:bg-white"
-      >
-        <p className="font-display font-black text-bubblegum">Gomen ne! ごめんね</p>
-        <p className="break-words">{message}</p>
-      </div>
+    <section role="alert" className="relative mx-auto flex w-full max-w-xl flex-col gap-1 border border-defeat/60 bg-navy/90 px-5 py-4 shadow-[inset_0_0_30px_rgb(232_64_87/0.12)]">
+      <p className="font-display text-sm font-bold uppercase tracking-[0.3em] text-defeat">Connection lost</p>
+      <p className="break-words text-sm text-cream">{message}</p>
     </section>
   );
 }
 
 function CostumeCard({ garment, onRetry }: { garment: Garment; onRetry?: () => void }) {
   return (
-    <div className={`${sticker} relative flex aspect-[4/5] flex-col overflow-hidden`}>
+    <div className={`${panel} relative flex aspect-[4/5] flex-col overflow-hidden`}>
       <GarmentBody garment={garment} onRetry={onRetry} />
     </div>
   );
@@ -403,10 +404,10 @@ function GarmentBody({ garment, onRetry }: { garment: Garment; onRetry?: () => v
   switch (garment.kind) {
     case "none":
       return (
-        <div className="m-4 flex flex-1 flex-col items-center justify-center gap-3 rounded-[1.5rem] border-4 border-dashed border-sky bg-sky/20 p-6 text-center">
-          <span className="text-6xl">🧵</span>
-          <p className="font-display text-lg font-black">Waiting for a character</p>
-          <p className="text-sm font-medium text-ink/70">We&apos;ll stitch a real-life costume from the art.</p>
+        <div className="m-4 flex flex-1 flex-col items-center justify-center gap-3 border border-dashed border-gold-dark/60 p-6 text-center">
+          <HexGlyph className="h-14 w-14 text-gold-dark" />
+          <p className="font-display text-base font-bold uppercase tracking-[0.2em] text-cream">Awaiting a champion</p>
+          <p className="text-sm text-parchment">The forge will cast a real-world skin from the art.</p>
         </div>
       );
     case "extracting":
@@ -415,20 +416,20 @@ function GarmentBody({ garment, onRetry }: { garment: Garment; onRetry?: () => v
       return (
         <>
           <Image src={garment.url} alt="Extracted costume" fill unoptimized className="object-contain p-2" />
-          <span className="absolute left-4 top-4 rounded-full border-[3px] border-ink bg-zap px-3 py-0.5 font-display text-sm font-black">
-            Costume ready! ✅
+          <span className="absolute left-4 top-4 border border-gold bg-abyss/85 px-3 py-1 font-display text-xs font-bold uppercase tracking-[0.25em] text-gold">
+            Skin forged
           </span>
         </>
       );
     case "failed":
       return (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 bg-blush p-6 text-center">
-          <span className="text-5xl">😵‍💫</span>
-          <p className="font-display text-lg font-black">The sewing machine jammed</p>
-          <p className="break-words text-sm font-medium">{garment.message}</p>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+          <HexGlyph className="h-12 w-12 text-defeat" />
+          <p className="font-display text-base font-bold uppercase tracking-[0.2em] text-defeat">The forge went cold</p>
+          <p className="break-words text-sm text-parchment">{garment.message}</p>
           {onRetry && (
-            <button type="button" onClick={onRetry} className={`${chunkyButton} bg-sky px-5 py-1.5`}>
-              Try again 🔁
+            <button type="button" onClick={onRetry} className={`${ghostButton} px-5 py-2 text-xs`}>
+              Reforge
             </button>
           )}
         </div>
@@ -443,18 +444,17 @@ function Stitching({ startedAt }: { startedAt: number }) {
     return () => clearInterval(id);
   }, [startedAt]);
   return (
-    <div aria-live="polite" className="flex flex-1 flex-col items-center justify-center gap-4 bg-blush p-6 text-center">
-      <div className="flex gap-3 text-4xl">
-        <span className="animate-bob">🧵</span>
-        <span className="animate-bob [animation-delay:200ms]">✂️</span>
-        <span className="animate-bob [animation-delay:400ms]">✨</span>
+    <div aria-live="polite" className="flex flex-1 flex-col items-center justify-center gap-5 bg-[radial-gradient(ellipse_at_center,rgb(3_151_171/0.25),transparent_70%)] p-6 text-center">
+      <div className="flex gap-3 text-teal">
+        <HexGlyph className="h-8 w-8 animate-ember" />
+        <HexGlyph className="h-8 w-8 animate-ember [animation-delay:300ms]" />
+        <HexGlyph className="h-8 w-8 animate-ember [animation-delay:600ms]" />
       </div>
-      <p className="font-display text-xl font-black">{EXTRACT_MESSAGES[Math.floor(elapsed / 3) % EXTRACT_MESSAGES.length]}</p>
-      <p className="rounded-full border-[3px] border-ink bg-white px-4 py-1 text-sm font-bold tabular-nums">{elapsed}s · about 10 seconds</p>
+      <p className="font-display text-base font-bold uppercase tracking-[0.2em] text-cream">{EXTRACT_MESSAGES[Math.floor(elapsed / 3) % EXTRACT_MESSAGES.length]}</p>
+      <p className="border border-gold-dark px-4 py-1 text-xs uppercase tracking-[0.2em] text-parchment tabular-nums">{elapsed}s · about 10 seconds</p>
     </div>
   );
 }
-
 function DropZone({
   label,
   hint,
@@ -492,8 +492,8 @@ function DropZone({
       }}
       onDragLeave={() => setDragging(false)}
       onDrop={onDrop}
-      className={`${sticker} group relative flex aspect-[4/5] cursor-pointer flex-col overflow-hidden transition hover:-translate-y-1 ${
-        dragging ? "-translate-y-1 bg-zap" : ""
+      className={`${panel} group relative flex aspect-[4/5] cursor-pointer flex-col overflow-hidden transition hover:border-gold hover:shadow-[0_0_24px_rgb(200_170_110/0.25)] ${
+        dragging ? "border-teal shadow-[0_0_24px_rgb(10_200_185/0.4)]" : ""
       }`}
     >
       <input
@@ -505,7 +505,7 @@ function DropZone({
           event.target.value = "";
         }}
       />
-      <span className="absolute left-4 top-4 z-10 rounded-full border-[3px] border-ink bg-bubblegum px-3 py-0.5 font-display text-sm font-black text-white">
+      <span className="absolute left-4 top-4 z-10 border border-gold bg-abyss/85 px-3 py-1 font-display text-xs font-bold uppercase tracking-[0.25em] text-gold">
         {label}
       </span>
       {upload ? (
@@ -517,32 +517,43 @@ function DropZone({
             unoptimized
             className="object-cover"
           />
-          <span className="absolute bottom-4 right-4 z-10 rounded-full border-[3px] border-ink bg-white px-3 py-0.5 text-sm font-bold opacity-0 transition group-hover:opacity-100">
-            Change photo
+          <span className="absolute bottom-4 right-4 z-10 border border-gold bg-abyss/85 px-3 py-1 text-xs uppercase tracking-[0.2em] text-cream opacity-0 transition group-hover:opacity-100">
+            Change art
           </span>
         </>
       ) : (
-        <span className="m-4 mt-14 flex flex-1 flex-col items-center justify-center gap-3 rounded-[1.5rem] border-4 border-dashed border-bubblegum/60 bg-blush/40 p-6 text-center">
-          <span className="animate-bob text-6xl">{emoji}</span>
-          <span className="font-display text-xl font-black">
-            {dragging ? "Drop it here!" : "Click or drag a photo"}
+        <span className="m-4 mt-14 flex flex-1 flex-col items-center justify-center gap-3 border border-dashed border-gold-dark/60 p-6 text-center">
+          <span className="animate-ember font-display text-5xl text-gold">{emoji}</span>
+          <span className="font-display text-base font-bold uppercase tracking-[0.2em] text-cream">
+            {dragging ? "Release to summon" : "Click or drop splash art"}
           </span>
-          <span className="text-sm font-medium text-ink/70">{hint}</span>
+          <span className="text-sm text-parchment">{hint}</span>
         </span>
       )}
     </label>
   );
 }
 
+function HexGlyph({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden viewBox="0 0 100 100" fill="none" stroke="currentColor" className={className}>
+      <path d="M50 4 90 27v46L50 96 10 73V27z" strokeWidth="3" />
+      <path d="M50 22 74 36v28L50 78 26 64V36z" strokeWidth="2" opacity="0.6" />
+      <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.8" />
+    </svg>
+  );
+}
+
 function Decorations() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 select-none text-4xl sm:text-5xl">
-      <span className="absolute left-[4%] top-[3%] animate-float">🌸</span>
-      <span className="absolute right-[6%] top-[6%] animate-float [animation-delay:1s]">⭐</span>
-      <span className="absolute left-[2%] top-[42%] animate-float [animation-delay:2s]">🎀</span>
-      <span className="absolute right-[3%] top-[55%] animate-float [animation-delay:1.5s]">🌸</span>
-      <span className="absolute bottom-[6%] left-[10%] animate-float [animation-delay:0.5s]">⭐</span>
-      <span className="absolute bottom-[3%] right-[12%] animate-float [animation-delay:2.5s]">🎀</span>
+    <div aria-hidden className="pointer-events-none absolute inset-0 select-none text-gold">
+      <HexGlyph className="absolute left-[3%] top-[4%] h-16 w-16 animate-float" />
+      <HexGlyph className="absolute right-[5%] top-[7%] h-10 w-10 animate-float text-teal [animation-delay:2s]" />
+      <HexGlyph className="absolute left-[1%] top-[46%] h-8 w-8 animate-float [animation-delay:4s]" />
+      <HexGlyph className="absolute right-[2%] top-[58%] h-20 w-20 animate-float [animation-delay:1s]" />
+      <HexGlyph className="absolute bottom-[8%] left-[9%] h-12 w-12 animate-float text-teal [animation-delay:3s]" />
+      <HexGlyph className="absolute bottom-[4%] right-[11%] h-9 w-9 animate-float [animation-delay:5s]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
     </div>
   );
 }

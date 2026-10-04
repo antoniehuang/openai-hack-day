@@ -2,48 +2,71 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-zen-maru);
+  --font-display: var(--font-cinzel);
 }
 
 @theme {
-  --color-ink: #2b1240;
-  --color-bubblegum: #ff4fa3;
-  --color-blush: #ffd6ec;
-  --color-zap: #ffe234;
-  --color-sky: #a8dcff;
+  /* Palette read from leagueoflegends.com: #0A1428 navy, #C8AA6E gold, #F0E6D2 cream, #59C1DE teal. */
+  --color-abyss: #010a13;
+  --color-navy: #0a1428;
+  --color-navy-deep: #091428;
+  --color-steel: #1e2328;
+  --color-gold: #c8aa6e;
+  --color-gold-deep: #c89b3c;
+  --color-gold-dark: #785a28;
+  --color-gold-shadow: #463714;
+  --color-cream: #f0e6d2;
+  --color-parchment: #a09b8c;
+  --color-teal: #0ac8b9;
+  --color-teal-deep: #0397ab;
+  --color-blue-deep: #005a82;
+  --color-defeat: #e84057;
 
-  --animate-float: float 4s ease-in-out infinite;
-  --animate-bob: bob 2.4s ease-in-out infinite;
-  --animate-wiggle: wiggle 1.2s ease-in-out infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-hex-spin: hex-spin 2.4s linear infinite;
+  --animate-ember: ember 1.8s ease-in-out infinite;
+  --animate-sheen: sheen 3.5s ease-in-out infinite;
 
   @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(-6deg); }
-    50% { transform: translateY(-14px) rotate(6deg); }
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.35; }
+    50% { transform: translateY(-16px) rotate(8deg); opacity: 0.6; }
   }
 
-  @keyframes bob {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+  @keyframes hex-spin {
+    to { transform: rotate(360deg); }
   }
 
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(-4deg) scale(1); }
-    50% { transform: rotate(4deg) scale(1.08); }
+  @keyframes ember {
+    0%, 100% { opacity: 0.35; transform: scale(0.92); }
+    50% { opacity: 1; transform: scale(1.08); }
+  }
+
+  @keyframes sheen {
+    0%, 60%, 100% { background-position: 0% 50%; }
+    30% { background-position: 100% 50%; }
   }
 }
 
 body {
-  color: var(--color-ink);
+  color: var(--color-cream);
   font-family: var(--font-sans), system-ui, sans-serif;
-  background-color: #ffe3f1;
+  background-color: var(--color-abyss);
   background-image:
-    radial-gradient(circle at 12px 12px, rgb(255 255 255 / 0.9) 2px, transparent 3px),
-    radial-gradient(circle at 36px 40px, rgb(255 79 163 / 0.28) 4px, transparent 5px),
-    radial-gradient(circle at 44px 34px, rgb(255 79 163 / 0.28) 4px, transparent 5px),
-    radial-gradient(circle at 40px 46px, rgb(255 79 163 / 0.28) 4px, transparent 5px),
-    linear-gradient(160deg, #ffc8e4 0%, #ffe3f1 45%, #c9e9ff 100%);
-  background-size: 56px 56px, 56px 56px, 56px 56px, 56px 56px, 100% 100%;
+    radial-gradient(ellipse 80% 45% at 50% -5%, rgb(3 151 171 / 0.32), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 110%, rgb(120 90 40 / 0.25), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 1 55 16.5v32L28 64 1 48.5v-32zM28 65 55 80.5V97M28 65 1 80.5V97' fill='none' stroke='%23c8aa6e' stroke-opacity='0.08' stroke-width='1'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, var(--color-navy-deep) 0%, var(--color-abyss) 55%, #000 100%);
+  background-size: 100% 100%, 100% 100%, 56px 97px, 100% 100%;
   background-attachment: fixed;
+}
+
+/* Clipped-corner hextech shapes. Tailwind v4 has no clip-path utility. */
+.clip-angled {
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+}
+
+.clip-hex {
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 
 @media (prefers-reduced-motion: reduce) {

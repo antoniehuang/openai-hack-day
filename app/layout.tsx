@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Zen_Maru_Gothic } from "next/font/google";
+import { Cinzel, Geist } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -7,23 +7,23 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const zenMaru = Zen_Maru_Gothic({
-  variable: "--font-zen-maru",
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
   weight: ["500", "700", "900"],
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Cosplay Try-On",
+  title: "Cosplay Mirror · Summoner's Fitting Room",
   description:
-    "Upload a selfie and an anime character, and see yourself in their cosplay. コスプレ変身!",
+    "Upload a champion's splash art, light your camera, and watch the skin wrap around you live.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${zenMaru.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${cinzel.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
