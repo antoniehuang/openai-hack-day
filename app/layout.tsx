@@ -16,7 +16,7 @@ const cinzel = Cinzel({
 export const metadata: Metadata = {
   title: "Cosplay Mirror · Summoner's Fitting Room",
   description:
-    "Upload a champion's splash art, light your camera, and watch the skin wrap around you live.",
+    "Pick a League of Legends skin, forge it into a real costume, and wear it live on your webcam.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

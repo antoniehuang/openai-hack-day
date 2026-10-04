@@ -135,118 +135,108 @@ export function SkinLibrary({
   const current = view.kind === "skins" ? champions.find((c) => c.name === view.champion) : undefined;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Skin library"
-      className="fixed inset-0 z-50 flex items-stretch justify-center bg-abyss/85 p-3 backdrop-blur-sm sm:p-8"
-      onClick={onClose}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative flex w-full max-w-6xl flex-col border border-gold-dark bg-navy shadow-[inset_0_0_0_1px_rgb(200_170_110/0.12),0_0_60px_rgb(0_0_0/0.8)]"
-      >
-        <header className="flex flex-col gap-3 border-b border-gold-shadow p-4 sm:flex-row sm:items-center sm:p-6">
-          <div className="flex flex-1 items-center gap-3">
-            {view.kind === "skins" && !needle && (
-              <button
-                type="button"
-                onClick={() => setView({ kind: "champions" })}
-                className="clip-angled border border-gold-dark px-3 py-1 font-display text-xs font-bold uppercase tracking-[0.2em] text-gold hover:border-gold hover:text-cream"
-              >
-                ← All champions
-              </button>
-            )}
-            <h2 className="font-display text-xl font-bold uppercase tracking-[0.2em] text-cream">
-              {needle ? "Search" : current ? current.name : "Skin library"}
-            </h2>
-            {library.kind === "ready" && !needle && (
-              <span className="text-xs uppercase tracking-[0.2em] text-parchment">
-                {current ? `${current.skins.length} skins` : `${champions.length} champions`}
-              </span>
-            )}
-          </div>
-          <input
-            autoFocus
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search champion or skin… e.g. Star Guardian"
-            aria-label="Search the skin library"
-            className="w-full border border-gold-dark bg-abyss px-4 py-2 text-cream outline-none placeholder:text-parchment/60 focus:border-gold sm:w-80"
-          />
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close library"
-            className="absolute right-3 top-3 text-2xl text-gold hover:text-cream sm:static"
-          >
-            ✕
-          </button>
-        </header>
-
-        {pickError && <p className="border-b border-gold-shadow px-6 py-2 text-sm text-defeat">{pickError}</p>}
-
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
-          {library.kind === "loading" && <p className="text-center text-parchment">Opening the vault…</p>}
-          {library.kind === "error" && <p className="text-center text-defeat">{library.message}</p>}
-          {library.kind === "ready" &&
-            (searchResults ? (
-              <div className="flex flex-col gap-6">
-                {searchResults.matchingChampions.length > 0 && (
-                  <ChampionGrid
-                    champions={searchResults.matchingChampions}
-                    onOpen={(name) => {
-                      setQuery("");
-                      setView({ kind: "skins", champion: name });
-                    }}
-                  />
-                )}
-                {searchResults.matchingSkins.length > 0 && (
-                  <SkinGrid skins={searchResults.matchingSkins} picking={picking} onPick={pick} showChampion />
-                )}
-                {searchResults.matchingChampions.length === 0 && searchResults.matchingSkins.length === 0 && (
-                  <p className="text-center text-parchment">No champion or skin matches “{query}”.</p>
-                )}
-              </div>
-            ) : current ? (
-              <SkinGrid skins={current.skins} picking={picking} onPick={pick} />
-            ) : (
-              <ChampionGrid champions={champions} onOpen={(name) => setView({ kind: "skins", champion: name })} />
-            ))}
+    <div className="flex h-full min-h-0 flex-col">
+      <header className="flex flex-col gap-2.5 border-b border-gold-shadow p-3">
+        <div className="flex min-h-8 items-center gap-2">
+          {view.kind === "skins" && !needle && (
+            <button
+              type="button"
+              onClick={() => setView({ kind: "champions" })}
+              aria-label="Back to all champions"
+              className="flex h-8 w-8 shrink-0 items-center justify-center border border-gold-dark text-gold transition hover:border-gold hover:text-cream"
+            >
+              ←
+            </button>
+          )}
+          <h2 className="truncate font-display text-sm font-bold uppercase tracking-[0.2em] text-cream">
+            {needle ? "Search results" : current ? current.name : "Champions"}
+          </h2>
+          {library.kind === "ready" && !needle && (
+            <span className="ml-auto shrink-0 text-[11px] uppercase tracking-[0.2em] text-parchment">
+              {current ? `${current.skins.length} skins` : champions.length}
+            </span>
+          )}
         </div>
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search champion or skin, e.g. Star Guardian"
+          aria-label="Search champions and skins"
+          className="w-full border border-gold-dark bg-abyss px-3 py-2 text-sm text-cream outline-none placeholder:text-parchment focus:border-teal focus:shadow-[0_0_12px_rgb(10_200_185/0.3)]"
+        />
+      </header>
 
-        <footer className="border-t border-gold-shadow px-6 py-2 text-[10px] uppercase tracking-[0.2em] text-parchment/60">
-          Skin art © Riot Games, via the League of Legends Wiki. Demo use only.
-        </footer>
+      {pickError && (
+        <p role="alert" className="border-b border-gold-shadow px-3 py-2 text-sm text-defeat">
+          {pickError}
+        </p>
+      )}
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-3 [scrollbar-color:var(--color-gold-dark)_transparent] [scrollbar-width:thin]">
+        {library.kind === "loading" && <p className="py-8 text-center text-sm text-parchment">Opening the vault…</p>}
+        {library.kind === "error" && (
+          <p role="alert" className="py-8 text-center text-sm text-defeat">
+            {library.message}
+          </p>
+        )}
+        {library.kind === "ready" &&
+          (searchResults ? (
+            <div className="flex flex-col gap-4">
+              {searchResults.matchingChampions.length > 0 && (
+                <ChampionGrid
+                  champions={searchResults.matchingChampions}
+                  onOpen={(name) => {
+                    setQuery("");
+                    setView({ kind: "skins", champion: name });
+                  }}
+                />
+              )}
+              {searchResults.matchingSkins.length > 0 && (
+                <SkinGrid skins={searchResults.matchingSkins} picking={picking} onPick={pick} showChampion />
+              )}
+              {searchResults.matchingChampions.length === 0 && searchResults.matchingSkins.length === 0 && (
+                <p className="py-8 text-center text-sm text-parchment">No champion or skin matches “{query}”.</p>
+              )}
+            </div>
+          ) : current ? (
+            <SkinGrid skins={current.skins} picking={picking} onPick={pick} />
+          ) : (
+            <ChampionGrid champions={champions} onOpen={(name) => setView({ kind: "skins", champion: name })} />
+          ))}
       </div>
+
+      <footer className="border-t border-gold-shadow px-3 py-2 text-[11px] text-parchment">
+        Skin art © Riot Games, via the League of Legends Wiki. Demo use only.
+      </footer>
     </div>
   );
 }
 
 function ChampionGrid({ champions, onOpen }: { champions: Champion[]; onOpen: (name: string) => void }) {
   return (
-    <ul className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-8">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(4.5rem,1fr))] gap-2">
       {champions.map((c) => (
         <li key={c.name}>
           <button
             type="button"
             onClick={() => onOpen(c.name)}
-            className="group flex w-full flex-col border border-gold-shadow bg-abyss text-left transition hover:border-gold hover:shadow-[0_0_18px_rgb(200_170_110/0.3)]"
+            title={`${c.name}, ${c.skins.length} skins`}
+            className="group flex w-full flex-col items-center gap-1 text-center"
           >
-            <span className="relative block aspect-[308/360] w-full overflow-hidden">
+            <span className="relative block aspect-square w-full overflow-hidden border border-gold-shadow transition group-hover:border-gold group-hover:shadow-[0_0_14px_rgb(200_170_110/0.45)] group-focus-visible:border-teal group-focus-visible:shadow-[0_0_0_1px_var(--color-teal)]">
               <Image
                 src={c.portrait}
-                alt={c.name}
+                alt=""
                 fill
                 unoptimized
-                sizes="140px"
-                className="object-cover object-top transition group-hover:scale-105"
+                sizes="96px"
+                className="object-cover object-[50%_15%] transition group-hover:scale-110"
               />
             </span>
-            <span className="truncate px-2 py-1.5 font-display text-[11px] font-bold uppercase tracking-[0.12em] text-cream">
+            <span className="w-full truncate font-display text-[11px] font-bold uppercase tracking-[0.08em] text-parchment group-hover:text-cream">
               {c.name}
             </span>
-            <span className="px-2 pb-1.5 text-[10px] text-parchment">{c.skins.length} skins</span>
           </button>
         </li>
       ))}
@@ -266,28 +256,31 @@ function SkinGrid({
   showChampion?: boolean;
 }) {
   return (
-    <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-6">
+    <ul className="grid grid-cols-[repeat(auto-fill,minmax(6.25rem,1fr))] gap-2.5">
       {skins.map((s) => (
         <li key={s.file}>
           <button
             type="button"
             onClick={() => onPick(s)}
             disabled={picking !== null}
-            className="group flex w-full flex-col border border-gold-shadow bg-abyss text-left transition hover:border-gold hover:shadow-[0_0_18px_rgb(200_170_110/0.35)] disabled:cursor-wait"
+            className="group flex w-full flex-col text-left disabled:cursor-wait"
           >
-            <span className="relative block aspect-[308/560] w-full overflow-hidden">
-              <Image src={s.file} alt={s.skin} fill unoptimized sizes="200px" className="object-cover transition group-hover:scale-105" />
+            <span className="relative block aspect-[308/560] w-full overflow-hidden border border-gold-shadow transition group-hover:border-gold group-hover:shadow-[0_0_16px_rgb(200_170_110/0.4)] group-focus-visible:border-teal group-focus-visible:shadow-[0_0_0_1px_var(--color-teal)]">
+              <Image src={s.file} alt="" fill unoptimized sizes="160px" className="object-cover transition group-hover:scale-105" />
               {picking === s.file && (
-                <span className="absolute inset-0 flex items-center justify-center bg-abyss/70 font-display text-xs uppercase tracking-[0.2em] text-gold">
+                <span className="absolute inset-0 flex items-center justify-center bg-abyss/75 font-display text-xs uppercase tracking-[0.2em] text-gold">
                   Summoning…
                 </span>
               )}
-              <span className="absolute inset-x-0 bottom-0 translate-y-full bg-[linear-gradient(180deg,transparent,rgb(1_10_19/0.95))] px-2 pb-2 pt-6 text-center font-display text-[11px] font-bold uppercase tracking-[0.15em] text-gold transition group-hover:translate-y-0">
-                Wear this skin
+              <span
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 translate-y-full bg-[linear-gradient(180deg,transparent,rgb(1_10_19/0.95))] px-2 pb-2 pt-6 text-center font-display text-[11px] font-bold uppercase tracking-[0.15em] text-gold transition group-hover:translate-y-0 group-focus-visible:translate-y-0"
+              >
+                Wear this
               </span>
             </span>
-            <span className="px-2 py-1.5 text-xs leading-tight text-cream">{s.skin}</span>
-            {showChampion && <span className="px-2 pb-1.5 text-[10px] uppercase tracking-[0.15em] text-parchment">{s.champion}</span>}
+            <span className="pt-1.5 text-xs leading-tight text-cream">{s.skin}</span>
+            {showChampion && <span className="text-[11px] uppercase tracking-[0.12em] text-parchment">{s.champion}</span>}
           </button>
         </li>
       ))}
