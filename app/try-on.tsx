@@ -7,7 +7,8 @@ import { ChampionPicker } from "./champion-picker";
 import { SkinLibrary } from "./skin-library";
 import { hexButton, HexGlyph } from "./ui";
 
-type Upload = { file: File; previewUrl: string };
+// `source` names a known pick (champion or skin) so its costume can be reused; uploads fall back to a content hash.
+type Upload = { file: File; previewUrl: string; source?: string };
 
 type Camera =
   | { kind: "off" }
@@ -17,8 +18,9 @@ type Camera =
 
 type Garment =
   | { kind: "none" }
+  | { kind: "unforged" }
   | { kind: "extracting"; startedAt: number }
-  | { kind: "ready"; url: string }
+  | { kind: "ready"; url: string; fromCache: boolean }
   | { kind: "failed"; message: string };
 
 type Session =
@@ -49,9 +51,31 @@ const ghostButton =
 
 const railTitle = "flex items-center gap-3 font-display text-xs font-bold uppercase tracking-[0.25em] text-gold";
 
-function replaceUpload(previous: Upload | null, file: File): Upload {
-  if (previous) URL.revokeObjectURL(previous.previewUrl);
-  return { file, previewUrl: URL.createObjectURL(file) };
+const COSTUME_CACHE_PREFIX = "cosplay-mirror:costume:";
+
+async function costumeKey(upload: Upload): Promise<string | null> {
+  if (upload.source) return COSTUME_CACHE_PREFIX + upload.source;
+  if (!crypto.subtle) return null;
+  const digest = await crypto.subtle.digest("SHA-256", await upload.file.arrayBuffer());
+  const hex = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+  return `${COSTUME_CACHE_PREFIX}upload:${hex}`;
+}
+
+// localStorage throws when storage is disabled or full; the cache is best-effort.
+function readCostume(key: string | null): string | null {
+  if (!key) return null;
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function saveCostume(key: string | null, url: string) {
+  if (!key) return;
+  try {
+    localStorage.setItem(key, url);
+  } catch {}
 }
 
 async function readJson(res: Response): Promise<Record<string, unknown>> {
@@ -102,18 +126,36 @@ export function TryOn() {
     setLog((prev) => [`${new Date().toLocaleTimeString()} ${line}`, ...prev].slice(0, 80));
   }
 
-  async function extract(file: File) {
+  function wear(url: string, fromCache: boolean) {
+    setGarment({ kind: "ready", url, fromCache });
+    lucy.current?.setState({ prompt, reference_image_url: url });
+  }
+
+  async function loadSaved(upload: Upload) {
+    const id = ++extraction.current;
+    const saved = readCostume(await costumeKey(upload));
+    if (id !== extraction.current) return;
+    if (saved) {
+      wear(saved, true);
+      addLog(`costume loaded from cache ${saved}`);
+    } else {
+      setGarment({ kind: "unforged" });
+    }
+  }
+
+  async function forge(upload: Upload) {
     const id = ++extraction.current;
     setGarment({ kind: "extracting", startedAt: Date.now() });
+    const key = await costumeKey(upload);
     const body = new FormData();
-    body.append("character", file);
+    body.append("character", upload.file);
     try {
       const res = await fetch("/api/garment", { method: "POST", body });
       const json = await readJson(res);
       if (id !== extraction.current) return;
       if (res.ok && typeof json.url === "string") {
-        setGarment({ kind: "ready", url: json.url });
-        lucy.current?.setState({ prompt, reference_image_url: json.url });
+        saveCostume(key, json.url);
+        wear(json.url, false);
         addLog(`costume ready ${json.url}`);
       } else {
         setGarment({ kind: "failed", message: errorText(json, res.status) });
@@ -123,9 +165,17 @@ export function TryOn() {
     }
   }
 
-  function chooseCharacter(file: File) {
-    setCharacter((prev) => replaceUpload(prev, file));
-    void extract(file);
+  function chooseCharacter(file: File, source?: string) {
+    const next = { file, previewUrl: URL.createObjectURL(file), source };
+    setCharacter((prev) => {
+      if (prev) URL.revokeObjectURL(prev.previewUrl);
+      return next;
+    });
+    void loadSaved(next);
+  }
+
+  function forgeCharacter() {
+    if (character) void forge(character);
   }
 
   async function startCamera() {
@@ -278,7 +328,7 @@ export function TryOn() {
           {picker === "3d" ? (
             <ChampionPicker
               onPick={(file, champion) => {
-                chooseCharacter(file);
+                chooseCharacter(file, `3d:${champion}`);
                 addLog(`champion pick ${champion}`);
               }}
             />
@@ -288,7 +338,7 @@ export function TryOn() {
               initialChampion={library.champion}
               onClose={closeLibrary}
               onPick={(file, skinName) => {
-                chooseCharacter(file);
+                chooseCharacter(file, `2d:${skinName}`);
                 addLog(`library pick ${skinName}`);
               }}
             />
@@ -331,8 +381,20 @@ export function TryOn() {
               <h2 className={railTitle}>
                 Forged costume
                 <span className="h-px flex-1 bg-gradient-to-r from-gold-dark to-transparent" />
+                {garment.kind === "ready" && character && (
+                  <button type="button" onClick={forgeCharacter} className={`${ghostButton} px-3 py-1 text-[10px]`}>
+                    Reforge
+                  </button>
+                )}
               </h2>
-              <CostumeCard garment={garment} onRetry={character ? () => void extract(character.file) : undefined} />
+              <CostumeCard
+                garment={garment}
+                onForge={character ? forgeCharacter : undefined}
+                onExpired={() => {
+                  addLog("saved costume expired");
+                  setGarment({ kind: "unforged" });
+                }}
+              />
             </section>
           </div>
         </aside>
@@ -473,6 +535,7 @@ export function TryOn() {
 
 function nextStep(garment: Garment, camera: Camera): string {
   if (garment.kind === "none") return "Pick a champion, then a skin. The forge turns it into a real costume.";
+  if (garment.kind === "unforged") return "Press Forge costume to turn the skin into a real costume.";
   if (garment.kind === "extracting") return "Forging your costume. About 10 seconds.";
   if (garment.kind === "failed") return "The forge went cold. Reforge, or pick another skin.";
   if (camera.kind === "starting") return "Allow camera access in your browser.";
@@ -534,15 +597,17 @@ function Bubble({ message }: { message: string }) {
   );
 }
 
-function CostumeCard({ garment, onRetry }: { garment: Garment; onRetry?: () => void }) {
+type CostumeCardProps = { garment: Garment; onForge?: () => void; onExpired: () => void };
+
+function CostumeCard(props: CostumeCardProps) {
   return (
     <div className="relative flex min-h-48 flex-1 flex-col overflow-hidden border border-gold-shadow bg-abyss">
-      <GarmentBody garment={garment} onRetry={onRetry} />
+      <GarmentBody {...props} />
     </div>
   );
 }
 
-function GarmentBody({ garment, onRetry }: { garment: Garment; onRetry?: () => void }) {
+function GarmentBody({ garment, onForge, onExpired }: CostumeCardProps) {
   switch (garment.kind) {
     case "none":
       return (
@@ -552,12 +617,32 @@ function GarmentBody({ garment, onRetry }: { garment: Garment; onRetry?: () => v
           <p className="text-xs text-parchment">The forge casts the skin as a real-world costume.</p>
         </div>
       );
+    case "unforged":
+      return (
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 p-4 text-center">
+          <HexGlyph className="h-10 w-10 text-gold" />
+          <p className="font-display text-sm font-bold uppercase tracking-[0.2em] text-cream">Ready to forge</p>
+          <p className="text-xs text-parchment">Casting the skin as a costume takes about 10 seconds.</p>
+          {onForge && (
+            <button type="button" onClick={onForge} className={`${hexButton} mt-1 px-6 py-2.5 text-sm`}>
+              Forge costume
+            </button>
+          )}
+        </div>
+      );
     case "extracting":
       return <Stitching startedAt={garment.startedAt} />;
     case "ready":
       return (
         <div className="relative flex-1 bg-[radial-gradient(ellipse_at_center,#f0e6d2_0%,#d8ccb0_100%)]">
-          <Image src={garment.url} alt="Forged costume" fill unoptimized className="object-contain p-2 mix-blend-multiply" />
+          <Image
+            src={garment.url}
+            alt="Forged costume"
+            fill
+            unoptimized
+            onError={garment.fromCache ? onExpired : undefined}
+            className="object-contain p-2 mix-blend-multiply"
+          />
         </div>
       );
     case "failed":
@@ -566,8 +651,8 @@ function GarmentBody({ garment, onRetry }: { garment: Garment; onRetry?: () => v
           <HexGlyph className="h-10 w-10 text-defeat" />
           <p className="font-display text-sm font-bold uppercase tracking-[0.2em] text-defeat">The forge went cold</p>
           <p className="break-words text-xs text-parchment">{garment.message}</p>
-          {onRetry && (
-            <button type="button" onClick={onRetry} className={`${ghostButton} mt-1 px-5 py-2 text-xs`}>
+          {onForge && (
+            <button type="button" onClick={onForge} className={`${ghostButton} mt-1 px-5 py-2 text-xs`}>
               Reforge
             </button>
           )}
